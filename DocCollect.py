@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Jul 11 17:15:24 2019
-
+Created: 2019-07-11
+Updated: 2019-07-23
 @author: RubenTsui@gmail.com
 """
 ### 
 
 import re
+from zhon import hanzi
 
 # Given a string of characters, add characters to existing dictionary 
 def AddChar2Dict(s, D):
@@ -233,7 +234,7 @@ def consolidateCommentaries(book):
             Comm[fileno].append(commentary)
         else:
             Comm[fileno] = []
-    book.commentaries2 = Comm
+    book.commentaries = Comm
 
 
 #################################################################
@@ -268,13 +269,14 @@ def RetrieveDocumentsMain(book):
 #################################################################
 def RetrieveDocumentsCommentary(book):
     book.qDocsC = {}  # quoted docs index by file no. 
-    for (k, commentary) in book.commentaries:
-        fileno = str(k).zfill(4)
-        quoted = getQuotedDocumentsFromCommentaries(commentary)
-        if fileno not in book.qDocsC:
-            book.qDocsC[fileno] = []
-        else:
-            book.qDocsC[fileno].extend(quoted)
+    for (fileno, commentary_list) in book.commentaries.items():
+        #fileno = str(k).zfill(4)
+        for commentary in commentary_list:
+            quoted = getQuotedDocumentsFromCommentaries(commentary)
+            if fileno not in book.qDocsC:
+                book.qDocsC[fileno] = []
+            else:
+                book.qDocsC[fileno].extend(quoted)
     # now remove key-value pairs where value is [] (empty list)
     for k in list(book.qDocsC.keys()):
         if book.qDocsC[k] == []:
@@ -287,9 +289,9 @@ def RetrieveDocumentsCommentary(book):
 #################################################################
 def getDocsSummary(book):
     ### Create the union of the 3 sets of keys 
-    all_filenumbers = set(list(book.iDocsM.keys()) + list(book.qDocsM.keys()) + list(book.qDocsC.keys()))
-    all_filenumbers = list(all_filenumbers)
-    all_filenumbers.sort()
+    #all_filenumbers = set(list(book.iDocsM.keys()) + list(book.qDocsM.keys()) + list(book.qDocsC.keys()))
+    #all_filenumbers = list(all_filenumbers)
+    #all_filenumbers.sort()
     book.docsSummary = []
     #for fileno in all_filenumbers:
     for i in range(len(book.flat_bodies)):
@@ -303,29 +305,38 @@ def getDocsSummary(book):
         rec.append(scrollNum(book.bookname, fileno))
         ## column 'section'
         rec.append(sectionType(book.bookname, fileno))
-        ## column 'grandCharCnt' -- grand total of character in book.flat_bodies[fileno].text 
+        ## column 'grandChar' -- grand total of character in book.flat_bodies[fileno].text 
         rec.append(len(book.flat_bodies[i].body.text))
-        ## column commentaryChatCnt
-        if fileno in book.commentaries2:
-            rec.append(len(''.join(book.commentaries2[fileno])))
+        ## column commentaryChar
+        if book.commentaries is not None and fileno in book.commentaries:
+            rec.append(len(''.join(book.commentaries[fileno])))
         else:
             rec.append(0)
-        ## columns 'iDocsCntM', 'iDocsCharCntM'
+        ## columns 'iDocsM', 'iDocsCharM'
         if fileno in book.iDocsM:
             rec.append(len(book.iDocsM[fileno]))           # no. of documents in list
             rec.append(len(''.join(book.iDocsM[fileno])))   # no. of characters across all docs in list 
         else:
             rec.extend([0, 0])
-        ## columns 'qDocsCntM', 'qDocsCharCntM'
+        ## columns 'qDocsM', 'qDocsCharM'
         if fileno in book.qDocsM:
             rec.append(len(book.qDocsM[fileno]))
             rec.append(len(''.join(book.qDocsM[fileno])))
         else:
             rec.extend([0, 0])
-        ## columns 'qDocsCntC', 'qDocsCharCntC'
-        if fileno in book.qDocsC:
+        ## columns 'qDocsC', 'qDocsCharC'
+        if book.commentaries is not None and fileno in book.qDocsC:
             rec.append(len(book.qDocsC[fileno]))
             rec.append(len(''.join(book.qDocsC[fileno])))
         else:
             rec.extend([0, 0])
         book.docsSummary.append(rec)    
+
+
+#################################################################
+# This function creates, for the given book, 
+#   1. one-character dictionary with frequency (no. of occurrences)
+#   2. two-character dictionary with frequency 
+#################################################################
+
+
