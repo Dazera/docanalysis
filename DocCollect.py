@@ -188,7 +188,7 @@ def normalizeBookNames(book):
                 vec[1] = HistoryC2E[vec[1]]
 
 #################################################################
-# Utility to lookup scroll no. given book title and file no.
+# Utility to lookup scroll no. and section given book title and file no.
 #################################################################
 ### Given bookname + fileno, return scroll number
 
