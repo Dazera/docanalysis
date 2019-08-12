@@ -96,7 +96,7 @@ def getIndentedDocuments(soup):
 ### Function to extract main text (full text 
 ### minus commentaries) from book
 #############################################################
-def getQuotedDocuments(soup, minchars=150):
+def getQuotedDocuments(soup, minchars):
     '''
     Input:
         soup:     bs4.BeautifulSoup object, typically a bs4-parsed HTML document 
@@ -123,7 +123,7 @@ def getQuotedDocuments(soup, minchars=150):
 ### Function to extract quoted documents from 
 ### book.commentaries
 #############################################################
-def getQuotedDocumentsFromCommentaries(txt, minchars=150):
+def getQuotedDocumentsFromCommentaries(txt, minchars):
     '''
     Input:
         txt:     string, a text from book.commentaries 
@@ -246,7 +246,7 @@ def consolidateCommentaries(book):
 # and attach a dictionary qDocsM to book
 # with the key-value pair:  fileno => [q1, q2, ...]
 #################################################################
-def RetrieveDocumentsMain(book):
+def RetrieveDocumentsMain(book, minchars=200):
     book.iDocsM = {}  # indented docs from _Main_ text indexed by file no.
     book.qDocsM = {}  # quoted docs from _Main_ text indexed by file no 
     for k, soup in enumerate(book.flat_bodies):
@@ -256,7 +256,7 @@ def RetrieveDocumentsMain(book):
         if indented:
             book.iDocsM[fileno] = indented
         # retrieve quoted documents
-        quoted = getQuotedDocuments(soup)
+        quoted = getQuotedDocuments(soup, minchars=minchars)
         #if quoted == []: print(f"empty quotes from file {fileno}, book '{book.bookname}'")
         if quoted:
             book.qDocsM[fileno] = quoted
@@ -267,12 +267,12 @@ def RetrieveDocumentsMain(book):
 # and attach a dictionary qDocsC to book
 # with the key-value pair:  fileno => [q1, q2, ...]
 #################################################################
-def RetrieveDocumentsCommentary(book):
+def RetrieveDocumentsCommentary(book, minchars=200):
     book.qDocsC = {}  # quoted docs index by file no. 
     for (fileno, commentary_list) in book.commentaries.items():
         #fileno = str(k).zfill(4)
         for commentary in commentary_list:
-            quoted = getQuotedDocumentsFromCommentaries(commentary)
+            quoted = getQuotedDocumentsFromCommentaries(commentary, minchars=minchars)
             if fileno not in book.qDocsC:
                 book.qDocsC[fileno] = []
             else:
