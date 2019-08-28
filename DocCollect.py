@@ -96,7 +96,7 @@ def getIndentedDocuments(soup):
 ### Function to extract main text (full text 
 ### minus commentaries) from book
 #############################################################
-def getQuotedDocuments(soup, minchars=150):
+def getQuotedDocuments(soup, minchars=200):
     '''
     Input:
         soup:     bs4.BeautifulSoup object, typically a bs4-parsed HTML document 
@@ -123,7 +123,7 @@ def getQuotedDocuments(soup, minchars=150):
 ### Function to extract quoted documents from 
 ### book.commentaries
 #############################################################
-def getQuotedDocumentsFromCommentaries(txt, minchars=150):
+def getQuotedDocumentsFromCommentaries(txt, minchars=200):
     '''
     Input:
         txt:     string, a text from book.commentaries 
