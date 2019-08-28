@@ -484,6 +484,7 @@ class Book:
 
         NB `book` here is the variable under which the Book object was created.
         E.g., "Jts" for "JiuTangshu".
+        NB: a lot of repetition here == need to redo.
         """
 
         print(self.bookname)
@@ -494,7 +495,8 @@ class Book:
         for idx, page in enumerate(self.flat_bodies):
             metatuple = namedtuple("metatuple", ["filenumber", "title", "section", "scroll"])
             try:
-                if self.bookname in exceptions:
+                if self.bookname == "Sanguozhi": #exception for Sanguozhi
+                #if self.bookname in exceptions: # general exception
                     x = self.paths[idx]
                     xsplit = x.split("／")
                     title = xsplit[2]
@@ -503,6 +505,54 @@ class Book:
                     scrollsplit = xsplit[4]
                     scrollsplit2= scrollsplit.split("\u3000")[0]
                     scrollsplit3 =  re.sub("卷", "", scrollsplit2)
+
+                    #below: provisional solution for some irregular numbers
+                    problemNumerals = ["一百一", "一百二", "一百三", "一百四", "一百五", "一百六", "一百七", "一百八", "一百九"]
+                    correctedNumerals = ["一百零一", "一百零二", "一百零三", "一百零四", "一百零五", "一百零六", "一百零七", "一百零八", "一百零九"]
+                    if scrollsplit3 in problemNumerals:
+                        #print(scrollsplit3)
+                        scrollsplit3 = scrollsplit3.replace(scrollsplit3, correctedNumerals[problemNumerals.index(scrollsplit3)])
+                        #print(scrollsplit3)
+                    #end provisional solution
+                    
+                    scrollsplit4 = pycnnum.cn2num(scrollsplit3)
+                    fileno = str(idx).zfill(4)
+                    if "傳" in scrollsplit:
+                        section3 = "傳" + ": " + section2
+                        metatuple =  fileno, title, section3, scrollsplit4
+                    elif "紀" in scrollsplit:
+                        section3 = "紀" + ": " + section2
+                        metatuple = fileno, title, section3, scrollsplit4
+                    elif "志" in scrollsplit:
+                        section3 = "志" + ": " + section2
+                        metatuple = fileno, title, section3, scrollsplit4
+                    else:
+                        metatuple = fileno, title, section2, scrollsplit4
+                    #metalist.append(metatuple)
+                    self.flat_meta.append(list(metatuple))
+                
+                elif self.bookname == "JiuWudaishi":
+                    x = self.paths[idx]
+                    xsplit = x.split("／")
+                    title = xsplit[2]
+                    section = xsplit[3]
+                    section2 = section.split("\u3000")[0]
+                    if len(xsplit) == 7: # handling an exception in JiuWudaishi
+                        scrollsplit = xsplit[5]
+                    else:
+                        scrollsplit = xsplit[4]
+                    scrollsplit2= scrollsplit.split("\u3000")[0]
+                    scrollsplit3 =  re.sub("卷", "", scrollsplit2)
+
+                    #below: provisional solution for some irregular numbers
+                    problemNumerals = ["一百一", "一百二", "一百三", "一百四", "一百五", "一百六", "一百七", "一百八", "一百九"]
+                    correctedNumerals = ["一百零一", "一百零二", "一百零三", "一百零四", "一百零五", "一百零六", "一百零七", "一百零八", "一百零九"]
+                    if scrollsplit3 in problemNumerals:
+                        #print(scrollsplit3)
+                        scrollsplit3 = scrollsplit3.replace(scrollsplit3, correctedNumerals[problemNumerals.index(scrollsplit3)])
+                        #print(scrollsplit3)
+                    #end provisional solution
+                    
                     scrollsplit4 = pycnnum.cn2num(scrollsplit3)
                     fileno = str(idx).zfill(4)
                     if "傳" in scrollsplit:
@@ -527,6 +577,16 @@ class Book:
                     scrollsplit = xsplit[4]
                     scrollsplit2= scrollsplit.split("\u3000")[0]
                     scrollsplit3 =  re.sub("卷", "", scrollsplit2)
+
+                    #below: provisional solution for some irregular numbers
+                    problemNumerals = ["一百一", "一百二", "一百三", "一百四", "一百五", "一百六", "一百七", "一百八", "一百九"]
+                    correctedNumerals = ["一百零一", "一百零二", "一百零三", "一百零四", "一百零五", "一百零六", "一百零七", "一百零八", "一百零九"]
+                    if scrollsplit3 in problemNumerals:
+                        #print(scrollsplit3)
+                        scrollsplit3 = scrollsplit3.replace(scrollsplit3, correctedNumerals[problemNumerals.index(scrollsplit3)])
+                        #print(scrollsplit3)
+                    #end provisional solution
+                    
                     scrollsplit4 = pycnnum.cn2num(scrollsplit3)
                     fileno = str(idx).zfill(4)
                     metatuple = fileno, title, section2, scrollsplit4
