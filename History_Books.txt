@@ -18,3 +18,4 @@ XinTangshu	新唐書
 JiuWudaishi	舊五代史 
 XinWudaishi	新五代史 
 Songshi	宋史 
+Yuanshi	元史
