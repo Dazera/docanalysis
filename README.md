@@ -1,6 +1,6 @@
 # docanalysis
 
-> with ruben-tsui and (earlier) jibancat
+> with ruben-tsui and (earlier) jibanCat
 
 Examining the quotation of documents in the dynastic histories, especially in the early medieval period. 
 
